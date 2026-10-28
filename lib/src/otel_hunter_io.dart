@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_hunter_io_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_hunter_io';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class HunterIoResult {
+  /// Creates a result.
   const HunterIoResult({
     this.domain,
     this.companyName,
@@ -77,8 +78,13 @@ class HunterIoResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class HunterIoCallResult<T> {
+  /// Creates a call result.
   const HunterIoCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final HunterIoResult? result;
 }
@@ -104,50 +110,50 @@ Future<T> tracedHunterIo<T>({
   final span = _tracer().startSpan(
     'hunter_io $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.result != null) {
       final extras = <Attribute<Object>>[];
       if (r.result!.domain != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'hunter_io.domain',
           r.result!.domain!,
         ));
       }
       if (r.result!.companyName != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'hunter_io.company.name',
           r.result!.companyName!,
         ));
       }
       if (r.result!.companyType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'hunter_io.company.type',
           r.result!.companyType!,
         ));
       }
       if (r.result!.emailPattern != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'hunter_io.email.pattern',
           r.result!.emailPattern!,
         ));
       }
       if (r.result!.emailsReturned != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.emails.returned',
           r.result!.emailsReturned!,
         ));
       }
       if (r.result!.totalEmailsAvailable != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.emails.total_available',
           r.result!.totalEmailsAvailable!,
         ));
       }
       if (r.result!.verificationResult != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'hunter_io.verification.result',
           r.result!.verificationResult!,
         ));
@@ -159,61 +165,61 @@ Future<T> tracedHunterIo<T>({
         }
       }
       if (r.result!.score != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.score',
           r.result!.score!,
         ));
       }
       if (r.result!.smtpCheck != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'hunter_io.smtp_check',
           r.result!.smtpCheck!,
         ));
       }
       if (r.result!.disposable != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'hunter_io.disposable',
           r.result!.disposable!,
         ));
       }
       if (r.result!.webmail != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'hunter_io.webmail',
           r.result!.webmail!,
         ));
       }
       if (r.result!.acceptAll != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'hunter_io.accept_all',
           r.result!.acceptAll!,
         ));
       }
       if (r.result!.creditsRequests != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.credits.requests',
           r.result!.creditsRequests!,
         ));
       }
       if (r.result!.creditsVerifications != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.credits.verifications',
           r.result!.creditsVerifications!,
         ));
       }
       if (r.result!.creditsRemainingRequests != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.credits.remaining.requests',
           r.result!.creditsRemainingRequests!,
         ));
       }
       if (r.result!.creditsRemainingVerifications != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'hunter_io.credits.remaining.verifications',
           r.result!.creditsRemainingVerifications!,
         ));
       }
       if (r.result!.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           r.result!.statusCode!,
         ));
@@ -224,13 +230,13 @@ Future<T> tracedHunterIo<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
