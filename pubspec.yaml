@@ -2,7 +2,7 @@ name: otel_hunter_io
 description: >-
   OpenTelemetry instrumentation for hunter_io by Dartastic.io. Adds standard
   OpenTelemetry observability to applications that use hunter_io.
-version: 0.1.0-wip
+version: 0.1.0
 repository: https://github.com/dartastic/otel_hunter_io
 homepage: https://dartastic.io
 
